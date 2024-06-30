@@ -2,61 +2,32 @@
 #
 # version = "0.94.2"
 
-def create_left_prompt [] {
-    let dir = match (do --ignore-shell-errors { $env.PWD | path relative-to $nu.home-path }) {
-        null => $env.PWD
-        '' => '~'
-        $relative_pwd => ([~ $relative_pwd] | path join)
-    }
+overlay new nuconfig
+mut clr = {}
+$clr.main_color = "#fdbb4b"
+$clr.main_color_faint = "#fcdca4"
+$clr.literalish = "#45e8cf"
+# $clr.literalish_faint = "#8be8da"
+$clr.literalish_faint = $clr.main_color_faint
+$clr.operatorish = "#ff6696"
+# $clr.structure = "#fcdca4"
+$clr.structure = "#ffccdc"
+# $clr.structure = $clr.operatorish
+$clr.nameish = "#f67300"
+$clr.main_color_bold = { fg: $clr.main_color, attr: b }
+$clr.main_color_faint_bold = { fg: $clr.main_color_faint, attr: b }
+$clr.main_color_reverse = { bg: $clr.main_color, fg: "#000000" }
+$clr.main_color_reverse_bold = { bg: $clr.main_color, fg: "#000000", attr: b }
+$clr.literalish_faint_bold = { fg: $clr.literalish_faint, attr: b }
+$clr.operatorish_bold = { fg: $clr.operatorish, attr: b }
+$clr.literalish_bold = { fg: $clr.literalish, attr: b }
+$clr.structure_bold = { fg: $clr.structure, attr: b }
+$clr.nameish_bold = { fg: $clr.nameish, attr: b }
+let clr = $clr
+$env.THEME_COLORS = $clr
+overlay use zero
 
-    let path_color = (if (is-admin) { ansi red_bold } else { ansi green_bold })
-    let separator_color = (if (is-admin) { ansi light_red_bold } else { ansi light_green_bold })
-    let path_segment = $"($path_color)($dir)"
-
-    $path_segment | str replace --all (char path_sep) $"($separator_color)(char path_sep)($path_color)"
-}
-
-def create_right_prompt [] {
-    # create a right prompt in magenta with green separators and am/pm underlined
-    let time_segment = ([
-        (ansi reset)
-        (ansi magenta)
-        (date now | format date '%x %X') # try to respect user's locale
-    ] | str join | str replace --regex --all "([/:])" $"(ansi green)${1}(ansi magenta)" |
-        str replace --regex --all "([AP]M)" $"(ansi magenta_underline)${1}")
-
-    let last_exit_code = if ($env.LAST_EXIT_CODE != 0) {([
-        (ansi rb)
-        ($env.LAST_EXIT_CODE)
-    ] | str join)
-    } else { "" }
-
-    ([$last_exit_code, (char space), $time_segment] | str join)
-}
-
-# Use nushell functions to define your right and left prompt
-$env.PROMPT_COMMAND = {|| create_left_prompt }
-# FIXME: This default is not implemented in rust code as of 2023-09-08.
-$env.PROMPT_COMMAND_RIGHT = {|| create_right_prompt }
-
-# The prompt indicators are environmental variables that represent
-# the state of the prompt
-$env.PROMPT_INDICATOR = {|| "> " }
-$env.PROMPT_INDICATOR_VI_INSERT = {|| ": " }
-$env.PROMPT_INDICATOR_VI_NORMAL = {|| "> " }
-$env.PROMPT_MULTILINE_INDICATOR = {|| "::: " }
-
-# If you want previously entered commands to have a different prompt from the usual one,
-# you can uncomment one or more of the following lines.
-# This can be useful if you have a 2-line prompt and it's taking up a lot of space
-# because every command entered takes up 2 lines instead of 1. You can then uncomment
-# the line below so that previously entered commands show with a single `🚀`.
-# $env.TRANSIENT_PROMPT_COMMAND = {|| "🚀 " }
-# $env.TRANSIENT_PROMPT_INDICATOR = {|| "" }
-# $env.TRANSIENT_PROMPT_INDICATOR_VI_INSERT = {|| "" }
-# $env.TRANSIENT_PROMPT_INDICATOR_VI_NORMAL = {|| "" }
-# $env.TRANSIENT_PROMPT_MULTILINE_INDICATOR = {|| "" }
-# $env.TRANSIENT_PROMPT_COMMAND_RIGHT = {|| "" }
+use /home/cyra/Documents/code/nucmds/startup.nu *
 
 # Specifies how environment variables are:
 # - converted from a string to a value on Nushell startup (from_string)
@@ -98,3 +69,79 @@ $env.NU_PLUGIN_DIRS = [
 
 # To load from a custom file you can use:
 # source ($nu.default-config-dir | path join 'custom.nu')
+
+$env.EDITOR = "nano"
+$env.SCCACHE = "/home/cyra/.cargo/bin/sccache"
+# $env.JAVA_HOME = /usr/lib/jvm/java-17-openjdk
+
+$env.PATH = ($env.PATH | append "/home/cyra/opt/binsyms")
+$env.PATH = ($env.PATH | append "/home/cyra/.deno/bin")
+$env.PATH = ($env.PATH | prepend "/home/cyra/.cargo/bin")
+$env.PATH = ($env.PATH | prepend "/home/cyra/opt/texlive/2023/bin/x86_64-linux")
+$env.PATH = ($env.PATH | append "/home/cyra/opt/gradle/bin")
+$env.PATH = ($env.PATH | append "/home/cyra/.local/share/JetBrains/Toolbox/scripts")
+
+$env.PATH = ($env.PATH | prepend "/home/cyra/.local/share/fnm")
+load-env (fnm env --json | from json)
+$env.PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
+
+zoxide init --cmd y nushell | save -f ~/.zoxide.nu
+
+
+def create_left_prompt [] {
+    let dir = match (do --ignore-shell-errors { $env.PWD | path relative-to $nu.home-path }) {
+        null => $env.PWD
+        '' => '~'
+        $relative_pwd => ([~ $relative_pwd] | path join)
+    }
+
+    let path_color = (if (is-admin) { ansi red_bold } else { ansi $clr.main_color_reverse_bold })
+    let separator_color = (if (is-admin) { ansi light_red_bold } else { ansi $clr.main_color_reverse })
+    let path_segment = $"($path_color)($dir)"
+    $path_segment | str replace --all (char path_sep) $"($separator_color)(char path_sep)($path_color)" | append $"(ansi reset)" | str join
+}
+
+def create_right_prompt [] {
+    let time = date now
+    mut time_string = ""
+    mut time_segment = ['%Y', '%m', '%d', '%H', '%M', '%S']
+        | each {|it| $time | format date $it }
+        | zip [(char -u '00B7'), (char -u '00B7'), ' ', ':', ':', $" \(($time | format date %:z))"]
+        | each {|it| $"(ansi reset)(ansi $clr.main_color_reverse_bold)($it.0)(ansi reset)(ansi $clr.main_color_reverse)($it.1)"}
+        | str join
+
+    let last_exit_code = if ($env.LAST_EXIT_CODE != 0) {([
+        (ansi reset)
+        (ansi bg_red)
+        ($env.LAST_EXIT_CODE)
+    ] | str join)
+    } else { "" }
+
+    ([$last_exit_code, (char space), $time_segment] | str join)
+}
+
+# Use nushell functions to define your right and left prompt
+$env.PROMPT_COMMAND = {|| create_left_prompt }
+# FIXME: This default is not implemented in rust code as of 2023-09-08.
+$env.PROMPT_COMMAND_RIGHT = {|| create_right_prompt }
+
+# The prompt indicators are environmental variables that represent
+# the state of the prompt
+$env.PROMPT_INDICATOR = {|| $"(ansi {fg: $clr.main_color, attr: b})(char -u "203A") " }
+$env.PROMPT_INDICATOR_VI_INSERT = {|| $"(ansi $clr.main_color): " }
+$env.PROMPT_INDICATOR_VI_NORMAL = {|| $"(ansi $clr.main_color)> " }
+$env.PROMPT_MULTILINE_INDICATOR = {|| $"(ansi $clr.main_color)::: " }
+
+# If you want previously entered commands to have a different prompt from the usual one,
+# you can uncomment one or more of the following lines.
+# This can be useful if you have a 2-line prompt and it's taking up a lot of space
+# because every command entered takes up 2 lines instead of 1. You can then uncomment
+# the line below so that previously entered commands show with a single `🚀`.
+# $env.TRANSIENT_PROMPT_COMMAND = {|| "🚀 " }
+# $env.TRANSIENT_PROMPT_INDICATOR = {|| "" }
+# $env.TRANSIENT_PROMPT_INDICATOR_VI_INSERT = {|| "" }
+# $env.TRANSIENT_PROMPT_INDICATOR_VI_NORMAL = {|| "" }
+# $env.TRANSIENT_PROMPT_MULTILINE_INDICATOR = {|| "" }
+# $env.TRANSIENT_PROMPT_COMMAND_RIGHT = {|| "" }
+
+overlay hide nuconfig
