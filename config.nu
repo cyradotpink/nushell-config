@@ -4,15 +4,14 @@
 
 overlay new nuconfig
 let clr = $env.THEME_COLORS
+# I made everything red that I don't understand the effect of yet, so every time i see something red
+# i know i need to check which of these values its controlled by
 let good_theme = {
     # color for nushell primitives
     separator: white
     leading_trailing_space_bg: { fg: "#505050", attr: s } # no fg, no bg, attr none effectively turns this off
     header: $clr.main_color_bold
-    empty: red
-    # Closures can be used to choose colors for specific values.
-    # The value (in this case, a bool) is piped into the closure.
-    # eg) {|| if $in { 'light_cyan' } else { 'light_gray' } }
+    empty: red # .. isnt empty, in non-syntax-contexts, just nothing? i havent found cases where its displayed as "null" or something
     bool: $clr.literalish
     int: $clr.literalish
     filesize: $clr.literalish
@@ -36,7 +35,7 @@ let good_theme = {
     shape_bool: $clr.literalish
     shape_closure: $clr.structure
     shape_custom: red
-    shape_datetime: red
+    shape_datetime: $clr.literalish
     shape_directory: $clr.literalish_faint
     shape_external: $clr.main_color
     shape_externalarg: $clr.literalish_faint
@@ -48,7 +47,7 @@ let good_theme = {
     shape_globpattern: $clr.literalish_faint
     shape_int: $clr.literalish
     shape_internalcall: $clr.main_color_bold
-    shape_keyword: red
+    shape_keyword: $clr.operatorish_bold  # turns out this is stuff like the `=` in `alias cmd = expr
     shape_list: $clr.structure
     shape_literal: red
     shape_match_pattern: $clr.main_color_faint
@@ -60,7 +59,7 @@ let good_theme = {
     shape_range: $clr.operatorish_bold
     shape_record: $clr.structure
     shape_redirection: $clr.operatorish_bold
-    shape_signature: red
+    shape_signature: $clr.nameish
     shape_string: $clr.literalish_faint
     shape_string_interpolation: $clr.literalish_faint
     shape_table: $clr.structure

@@ -18,6 +18,7 @@ $clr.main_color_bold = { fg: $clr.main_color, attr: b }
 $clr.main_color_faint_bold = { fg: $clr.main_color_faint, attr: b }
 $clr.main_color_reverse = { bg: $clr.main_color, fg: "#000000" }
 $clr.main_color_reverse_bold = { bg: $clr.main_color, fg: "#000000", attr: b }
+$clr.main_color_veryfaint_reverse = { bg: "#fce9c9", fg: "#000000", attr: d }
 $clr.literalish_faint_bold = { fg: $clr.literalish_faint, attr: b }
 $clr.operatorish_bold = { fg: $clr.operatorish, attr: b }
 $clr.literalish_bold = { fg: $clr.literalish, attr: b }
@@ -71,6 +72,7 @@ $env.NU_PLUGIN_DIRS = [
 # To load from a custom file you can use:
 # source ($nu.default-config-dir | path join 'custom.nu')
 
+$env.NU_DEPTH = (if 'NU_DEPTH' in $env { ($env.NU_DEPTH | into int) + 1 } else { 0 })
 $env.EDITOR = "nano"
 $env.SCCACHE = "/home/cyra/.cargo/bin/sccache"
 # $env.JAVA_HOME = /usr/lib/jvm/java-17-openjdk
@@ -99,7 +101,16 @@ def create_left_prompt [] {
     let path_color = (if (is-admin) { ansi red_bold } else { ansi $clr.main_color_reverse_bold })
     let separator_color = (if (is-admin) { ansi light_red_bold } else { ansi $clr.main_color_reverse })
     let path_segment = $"($path_color)($dir)"
-    $path_segment | str replace --all (char path_sep) $"($separator_color)(char path_sep)($path_color)" | append $"(ansi reset)" | str join
+    let depth_indicator = if $env.NU_DEPTH > 0 {
+        $"(ansi $clr.main_color_veryfaint_reverse)(char -u '203A')($env.NU_DEPTH | into string)(char -u '2039')(ansi reset)"
+    } else { '' }
+
+    (
+        $"(ansi reset)" +
+        $depth_indicator +
+        ($path_segment | str replace --all (char path_sep) $"($separator_color)(char path_sep)($path_color)") +
+        $"(ansi reset)"
+    )
 }
 
 def create_right_prompt [] {
@@ -107,7 +118,7 @@ def create_right_prompt [] {
     mut time_string = ""
     mut time_segment = ['%Y', '%m', '%d', '%H', '%M', '%S']
         | each {|it| $time | format date $it }
-        | zip [(char -u '00B7'), (char -u '00B7'), ' ', ':', ':', $" \(($time | format date %:z))"]
+        | zip [(char -u '00B7'), (char -u '00B7'), ' ', ':', ':', $" \((^date --date=($time) +%Z))"]
         | each {|it| $"(ansi reset)(ansi $clr.main_color_reverse_bold)($it.0)(ansi reset)(ansi $clr.main_color_reverse)($it.1)"}
         | str join
 
