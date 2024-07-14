@@ -18,7 +18,7 @@ $clr.main_color_bold = { fg: $clr.main_color, attr: b }
 $clr.main_color_faint_bold = { fg: $clr.main_color_faint, attr: b }
 $clr.main_color_reverse = { bg: $clr.main_color, fg: "#000000" }
 $clr.main_color_reverse_bold = { bg: $clr.main_color, fg: "#000000", attr: b }
-$clr.main_color_veryfaint_reverse = { bg: "#fce9c9", fg: "#000000", attr: d }
+$clr.main_color_veryfaint_reverse = { bg: "#fce9c9", fg: "#000000"}
 $clr.literalish_faint_bold = { fg: $clr.literalish_faint, attr: b }
 $clr.operatorish_bold = { fg: $clr.operatorish, attr: b }
 $clr.literalish_bold = { fg: $clr.literalish, attr: b }
@@ -72,7 +72,7 @@ $env.NU_PLUGIN_DIRS = [
 # To load from a custom file you can use:
 # source ($nu.default-config-dir | path join 'custom.nu')
 
-$env.NU_DEPTH = (if 'NU_DEPTH' in $env { ($env.NU_DEPTH | into int) + 1 } else { 0 })
+$env.NU_DEPTH = (try { ($env.NU_DEPTH | into int) + 1 } catch { 0 })
 $env.EDITOR = "nano"
 $env.SCCACHE = "/home/cyra/.cargo/bin/sccache"
 # $env.JAVA_HOME = /usr/lib/jvm/java-17-openjdk
@@ -118,7 +118,7 @@ def create_right_prompt [] {
     mut time_string = ""
     mut time_segment = ['%Y', '%m', '%d', '%H', '%M', '%S']
         | each {|it| $time | format date $it }
-        | zip [(char -u '00B7'), (char -u '00B7'), ' ', ':', ':', $" \((^date --date=($time) +%Z))"]
+        | zip [(char -u '00B7'), (char -u '00B7'), ' ', ':', ':', $" \(($time | timezone | get name))"]
         | each {|it| $"(ansi reset)(ansi $clr.main_color_reverse_bold)($it.0)(ansi reset)(ansi $clr.main_color_reverse)($it.1)"}
         | str join
 
