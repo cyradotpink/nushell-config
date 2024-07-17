@@ -28,7 +28,7 @@ let clr = $clr
 $env.THEME_COLORS = $clr
 overlay use zero
 
-use /home/cyra/Documents/code/nucmds/startup.nu *
+use ~/Documents/code/nucmds/startup.nu *
 
 # Specifies how environment variables are:
 # - converted from a string to a value on Nushell startup (from_string)
@@ -72,19 +72,23 @@ $env.NU_PLUGIN_DIRS = [
 # To load from a custom file you can use:
 # source ($nu.default-config-dir | path join 'custom.nu')
 
-$env.NU_DEPTH = (try { ($env.NU_DEPTH | into int) + 1 } catch { 0 })
+$env.NU_DEPTH = if (procfs exe (procfs status $nu.pid | get PPID | into int)) == (procfs exe $nu.pid) {
+    try { ($env.NU_DEPTH | into int) + 1 } catch { 0 }
+} else {
+    0
+}
 $env.EDITOR = "nano"
-$env.SCCACHE = "/home/cyra/.cargo/bin/sccache"
+$env.SCCACHE = $env.HOME + "/.cargo/bin/sccache"
 # $env.JAVA_HOME = /usr/lib/jvm/java-17-openjdk
 
-$env.PATH = ($env.PATH | append "/home/cyra/opt/binsyms")
-$env.PATH = ($env.PATH | append "/home/cyra/.deno/bin")
-$env.PATH = ($env.PATH | prepend "/home/cyra/.cargo/bin")
-$env.PATH = ($env.PATH | prepend "/home/cyra/opt/texlive/2023/bin/x86_64-linux")
-$env.PATH = ($env.PATH | append "/home/cyra/opt/gradle/bin")
-$env.PATH = ($env.PATH | append "/home/cyra/.local/share/JetBrains/Toolbox/scripts")
+$env.PATH = ($env.PATH | append ($env.HOME + "/opt/binsyms"))
+$env.PATH = ($env.PATH | append ($env.HOME + "/.deno/bin"))
+$env.PATH = ($env.PATH | prepend ($env.HOME + "/.cargo/bin"))
+$env.PATH = ($env.PATH | prepend ($env.HOME + "/opt/texlive/2023/bin/x86_64-linux"))
+$env.PATH = ($env.PATH | append ($env.HOME + "/opt/gradle/bin"))
+$env.PATH = ($env.PATH | append ($env.HOME + "/.local/share/JetBrains/Toolbox/scripts"))
 
-$env.PATH = ($env.PATH | prepend "/home/cyra/.local/share/fnm")
+$env.PATH = ($env.PATH | prepend ($env.HOME + "/.local/share/fnm"))
 load-env (fnm env --json | from json)
 $env.PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
 
