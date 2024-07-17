@@ -72,7 +72,7 @@ $env.NU_PLUGIN_DIRS = [
 # To load from a custom file you can use:
 # source ($nu.default-config-dir | path join 'custom.nu')
 
-$env.NU_DEPTH = if (procfs exe (procfs status $nu.pid | get PPID | into int)) == (procfs exe $nu.pid) {
+$env.NU_DEPTH = if (procfs exe (procfs status $nu.pid | get p_pid)) == (procfs exe $nu.pid) {
     try { ($env.NU_DEPTH | into int) + 1 } catch { 0 }
 } else {
     0
