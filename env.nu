@@ -1,6 +1,4 @@
 # Nushell Environment Config File
-#
-# version = "0.95.0"
 
 overlay new nuconfig
 mut clr = {}
@@ -113,7 +111,8 @@ def create_left_prompt [] {
         $"(ansi reset)" +
         $depth_indicator +
         ($path_segment | str replace --all (char path_sep) $"($separator_color)(char path_sep)($path_color)") +
-        $"(ansi reset)"
+        $"(ansi reset)" +
+        $"(ansi $clr.main_color)(char -u '258B')(ansi reset)"
     )
 }
 
