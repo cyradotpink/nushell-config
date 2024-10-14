@@ -90,8 +90,6 @@ $env.PATH = ($env.PATH | prepend ($env.HOME + "/.local/share/fnm"))
 load-env (fnm env --json | from json)
 $env.PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
 
-zoxide init --cmd y nushell | save -f ~/.zoxide.nu
-
 
 def create_left_prompt [] {
     let dir = match (do --ignore-shell-errors { $env.PWD | path relative-to $nu.home-path }) {

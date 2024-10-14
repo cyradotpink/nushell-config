@@ -42,6 +42,7 @@ let good_theme = {
     shape_flag: $clr.main_color
     shape_float: $clr.literalish
     shape_garbage: { fg: white, bg: red, attr: b}
+    shape_glob_interpolation: $clr.literalish_faint
     shape_globpattern: $clr.literalish_faint
     shape_int: $clr.literalish
     shape_internalcall: $clr.main_color_bold
@@ -224,7 +225,5 @@ $env.config = {
 
     keybindings: []
 }
-
-source ~/.zoxide.nu
 
 overlay hide nuconfig
