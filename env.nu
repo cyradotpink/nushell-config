@@ -102,7 +102,7 @@ $env.PROMPT_COMMAND_RIGHT = {||
     ([$last_exit_code, (char space), $time_segment] | str join)
 }
 
-$env.PROMPT_INDICATOR = {|| $"(ansi {fg: $env.kira.colors.main_color, attr: b})(char -u "203A") (ansi reset)" }
+$env.PROMPT_INDICATOR = {|| $"(ansi {fg: $env.kira.colors.main_color, attr: b})(char -u "21AA") (ansi reset)" }
 $env.PROMPT_INDICATOR_VI_INSERT = {|| $"(ansi $env.kira.colors.main_color): (ansi reset)" }
 $env.PROMPT_INDICATOR_VI_NORMAL = {|| $"(ansi $env.kira.colors.main_color)> (ansi reset)" }
 $env.PROMPT_MULTILINE_INDICATOR = {|| $"(ansi $env.kira.colors.main_color)::: (ansi reset)" }
