@@ -1,27 +1,27 @@
 source default_env.nu
 
-mut kira = {}
-
-$kira.colors = {}
-$kira.colors.main_color = "#fdbb4b"
-$kira.colors.main_color_faint = "#fcdca4"
-$kira.colors.literalish = "#45e8cf"
-$kira.colors.literalish_faint = $kira.colors.main_color_faint
-$kira.colors.operatorish = "#ff6696"
-$kira.colors.structure = "#ffccdc"
-$kira.colors.nameish = "#f67300"
-$kira.colors.main_color_bold = { fg: $kira.colors.main_color, attr: b }
-$kira.colors.main_color_faint_bold = { fg: $kira.colors.main_color_faint, attr: b }
-$kira.colors.main_color_reverse = { bg: $kira.colors.main_color, fg: "#000000" }
-$kira.colors.main_color_reverse_bold = { bg: $kira.colors.main_color, fg: "#000000", attr: b }
-$kira.colors.main_color_veryfaint_reverse = { bg: "#fce9c9", fg: "#000000"}
-$kira.colors.literalish_faint_bold = { fg: $kira.colors.literalish_faint, attr: b }
-$kira.colors.operatorish_bold = { fg: $kira.colors.operatorish, attr: b }
-$kira.colors.literalish_bold = { fg: $kira.colors.literalish, attr: b }
-$kira.colors.structure_bold = { fg: $kira.colors.structure, attr: b }
-$kira.colors.nameish_bold = { fg: $kira.colors.nameish, attr: b }
-
-let kira = $kira
+$env.kira = {}
+$env.kira.colors = do {
+    mut c = {}
+    $c.main_color = "#fdbb4b"
+    $c.main_color_faint = "#fcdca4"
+    $c.literalish = "#45e8cf"
+    $c.literalish_faint = $c.main_color_faint
+    $c.operatorish = "#ff6696"
+    $c.structure = "#ffccdc"
+    $c.nameish = "#f67300"
+    $c.main_color_bold = { fg: $c.main_color, attr: b }
+    $c.main_color_faint_bold = { fg: $c.main_color_faint, attr: b }
+    $c.main_color_reverse = { bg: $c.main_color, fg: "#000000" }
+    $c.main_color_reverse_bold = { bg: $c.main_color, fg: "#000000", attr: b }
+    $c.main_color_veryfaint_reverse = { bg: "#fce9c9", fg: "#000000"}
+    $c.literalish_faint_bold = { fg: $c.literalish_faint, attr: b }
+    $c.operatorish_bold = { fg: $c.operatorish, attr: b }
+    $c.literalish_bold = { fg: $c.literalish, attr: b }
+    $c.structure_bold = { fg: $c.structure, attr: b }
+    $c.nameish_bold = { fg: $c.nameish, attr: b }
+    $c
+}
 
 use ~/Documents/code/nucmds/startup.nu *
 
@@ -46,9 +46,10 @@ $env.PATH = ($env.PATH | prepend ($env.HOME + "/.local/share/fnm"))
 load-env (fnm env --json | from json)
 $env.PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
 
-def create_left_prompt_custom [] {
+$env.PROMPT_COMMAND = {||
+    let c = $env.kira.colors
     let time = date now
-    let time_segment = $"(ansi $kira.colors.main_color_veryfaint_reverse) ($time | format date '%H:%M:%S') (timezone | get name) (ansi reset)"
+    let time_segment = $"(ansi $c.main_color_veryfaint_reverse) ($time | format date '%H:%M:%S') (timezone | get name) (ansi reset)"
 
     let last_exit_code = if ($env.LAST_EXIT_CODE != 0) {([
         (ansi bg_red)
@@ -62,16 +63,12 @@ def create_left_prompt_custom [] {
     let pwd = $env.PWD | path split | skip 1
     let home = $env.HOME | path split | skip 1
     let is_inhome = ($pwd | first ($home | length)) == $home
-    let path_nodes = (if $is_inhome { $pwd | skip ($home | length) } else { $pwd }) | each {|it| $"(ansi reset)(ansi $kira.colors.main_color_reverse_bold)($it)"}
-    let path_parts = 0..<($path_nodes | length) | each { $"(ansi reset)(ansi $kira.colors.main_color_reverse)/" } | zip $path_nodes | flatten
-    let dir = $"(ansi $kira.colors.main_color_reverse_bold) (if $is_inhome { "~" } else { "" })($path_parts | str join) (ansi reset)"
-
-    # let path_color = (if (is-admin) { ansi red_bold } else { ansi $kira.colors.main_color_reverse_bold })
-    # let separator_color = (if (is-admin) { ansi light_red_bold } else { ansi $kira.colors.main_color_reverse })
-    # let path_segment = $"($path_color) ($dir) "
+    let path_nodes = (if $is_inhome { $pwd | skip ($home | length) } else { $pwd }) | each {|it| $"(ansi reset)(ansi $c.main_color_reverse_bold)($it)"}
+    let path_parts = 0..<($path_nodes | length) | each { $"(ansi reset)(ansi $c.main_color_reverse)/" } | zip $path_nodes | flatten
+    let dir = $"(ansi $c.main_color_reverse_bold) (if $is_inhome { "~" } else { "" })($path_parts | str join) (ansi reset)"
 
     let depth_indicator = if $env.NU_DEPTH > 0 {
-        $"(ansi $kira.colors.main_color_veryfaint_reverse)(char -u '203A')($env.NU_DEPTH | into string)(char -u '2039')(ansi reset)"
+        $"(ansi $c.main_color_veryfaint_reverse)(char -u '203A')($env.NU_DEPTH | into string)(char -u '2039')(ansi reset)"
     } else { '' }
 
     (
@@ -85,13 +82,14 @@ def create_left_prompt_custom [] {
     )
 }
 
-def create_right_prompt_custom [] {
+$env.PROMPT_COMMAND_RIGHT = {||
+    let c = $env.kira.colors
     let time = date now
     mut time_string = ""
     mut time_segment = ['%Y', '%m', '%d', '%H', '%M', '%S']
         | each {|it| $time | format date $it }
         | zip [(char -u '00B7'), (char -u '00B7'), ' ', ':', ':', $" \(($time | timezone | get name))"]
-        | each {|it| $"(ansi reset)(ansi $kira.colors.main_color_reverse_bold)($it.0)(ansi reset)(ansi $kira.colors.main_color_reverse)($it.1)"}
+        | each {|it| $"(ansi reset)(ansi $c.main_color_reverse_bold)($it.0)(ansi reset)(ansi $c.main_color_reverse)($it.1)"}
         | str join
 
     let last_exit_code = if ($env.LAST_EXIT_CODE != 0) {([
@@ -104,11 +102,8 @@ def create_right_prompt_custom [] {
     ([$last_exit_code, (char space), $time_segment] | str join)
 }
 
-$env.PROMPT_COMMAND = {|| create_left_prompt_custom }
-$env.PROMPT_COMMAND_RIGHT = {|| }
-
-$env.PROMPT_INDICATOR = {|| $"(ansi {fg: $kira.colors.main_color, attr: b})(char -u "203A") (ansi reset)" }
-$env.PROMPT_INDICATOR_VI_INSERT = {|| $"(ansi $kira.colors.main_color): (ansi reset)" }
-$env.PROMPT_INDICATOR_VI_NORMAL = {|| $"(ansi $kira.colors.main_color)> (ansi reset)" }
-$env.PROMPT_MULTILINE_INDICATOR = {|| $"(ansi $kira.colors.main_color)::: (ansi reset)" }
+$env.PROMPT_INDICATOR = {|| $"(ansi {fg: $env.kira.colors.main_color, attr: b})(char -u "203A") (ansi reset)" }
+$env.PROMPT_INDICATOR_VI_INSERT = {|| $"(ansi $env.kira.colors.main_color): (ansi reset)" }
+$env.PROMPT_INDICATOR_VI_NORMAL = {|| $"(ansi $env.kira.colors.main_color)> (ansi reset)" }
+$env.PROMPT_MULTILINE_INDICATOR = {|| $"(ansi $env.kira.colors.main_color)::: (ansi reset)" }
 
