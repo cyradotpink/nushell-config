@@ -8,7 +8,7 @@ $kira.theme = {
     separator: white
     leading_trailing_space_bg: { fg: "#505050", attr: s } # no fg, no bg, attr none effectively turns this off
     header: $kira.colors.main_color_bold
-    empty: red # .. isnt empty, in non-syntax-contexts, just nothing? i havent found cases where its displayed as "null" or something
+    empty: red
     bool: $kira.colors.literalish
     int: $kira.colors.literalish
     filesize: $kira.colors.literalish
@@ -45,7 +45,7 @@ $kira.theme = {
     shape_globpattern: $kira.colors.literalish_faint
     shape_int: $kira.colors.literalish
     shape_internalcall: $kira.colors.main_color_bold
-    shape_keyword: $kira.colors.operatorish_bold  # turns out this is stuff like the `=` in `alias cmd = expr
+    shape_keyword: $kira.colors.operatorish_bold
     shape_list: $kira.colors.structure
     shape_literal: red
     shape_match_pattern: $kira.colors.main_color_faint
@@ -97,5 +97,5 @@ $kira.scratch.menus.help_menu.style = $kira.scratch.menus.history_menu.style
 
 $env.config.menus = $kira.scratch.menus | values
 
-let kira = $kira
+let kira = {}
 
