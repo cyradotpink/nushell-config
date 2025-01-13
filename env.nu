@@ -39,12 +39,12 @@ $env.PATH = ($env.PATH | append ($env.HOME + "/.deno/bin"))
 $env.PATH = ($env.PATH | append ($env.HOME + "/opt/gradle/bin"))
 $env.PATH = ($env.PATH | append ($env.HOME + "/.local/share/JetBrains/Toolbox/scripts"))
 $env.PATH = ($env.PATH | append ($env.HOME + "/.ghcup/bin"))
-$env.PATH = ($env.PATH | prepend ($env.HOME + "/.cargo/bin"))
-$env.PATH = ($env.PATH | prepend ($env.HOME + "/opt/texlive/2023/bin/x86_64-linux"))
-$env.PATH = ($env.PATH | prepend ((pyenv root) + "/shims"))
-$env.PATH = ($env.PATH | prepend ($env.HOME + "/.local/share/fnm"))
+$env.PATH = ($env.PATH | append ($env.HOME + "/.cargo/bin"))
+$env.PATH = ($env.PATH | append ($env.HOME + "/opt/texlive/2023/bin/x86_64-linux"))
+$env.PATH = ($env.PATH | append ((pyenv root) + "/shims"))
+$env.PATH = ($env.PATH | append ($env.HOME + "/.local/share/fnm"))
 load-env (fnm env --json | from json)
-$env.PATH = ($env.PATH | prepend $"($env.FNM_MULTISHELL_PATH)/bin")
+$env.PATH = ($env.PATH | append $"($env.FNM_MULTISHELL_PATH)/bin")
 
 $env.PROMPT_COMMAND = {||
     let c = $env.kira.colors

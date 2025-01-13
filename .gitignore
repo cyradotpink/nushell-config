@@ -1,4 +1,5 @@
 /*
 !/.gitignore
+!/update_defaults.nu
 !/config.nu
 !/env.nu
