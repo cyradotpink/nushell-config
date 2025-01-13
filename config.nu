@@ -1,5 +1,3 @@
-source default_config.nu
-
 $env.config.color_config = do {||
     let c = $env.kira.colors
     {
@@ -74,26 +72,27 @@ $env.config.history.isolation = true
 
 $env.config.highlight_resolved_externals = true
 
-$env.config.menus = do {||
-    let c = $env.kira.colors
-
-    mut menus = $env.config.menus | reduce -f {} {|it, acc| $acc | insert $it.name $it }
-
-    $menus.completion_menu.marker = $"(ansi $c.main_color)| (ansi reset)"
-    $menus.completion_menu.style.text = $c.main_color
-    $menus.completion_menu.style.description_text = $c.main_color_faint
-
-    $menus.ide_completion_menu.marker = $"(ansi $c.main_color)| (ansi reset)"
-    $menus.ide_completion_menu.style = $menus.completion_menu.style
-
-    $menus.history_menu.marker = $"(ansi $c.main_color)? (ansi reset)"
-    $menus.history_menu.style.text = $c.main_color
-    $menus.history_menu.style.selected_text = $c.main_color_reverse
-    $menus.history_menu.style.description_text = $c.main_color_faint
-
-    $menus.help_menu.marker = $"(ansi $c.main_color)? (ansi reset)"
-    $menus.help_menu.style = $menus.history_menu.style
-
-    $menus | values
-}
-
+# $env.config.menus = do {||
+#     let c = $env.kira.colors
+# 
+#     $env.config.menus = [{ name: completion_menu }, { name: ide_completion_menu }, { name: history_menu }, { name: help_menu }]
+#     mut menus = $env.config.menus | reduce -f {} {|it, acc| $acc | insert $it.name $it }
+# 
+#     $menus.completion_menu.marker = $"(ansi $c.main_color)| (ansi reset)"
+#     $menus.completion_menu.style.text = $c.main_color
+#     $menus.completion_menu.style.description_text = $c.main_color_faint
+# 
+#     $menus.ide_completion_menu.marker = $"(ansi $c.main_color)| (ansi reset)"
+#     $menus.ide_completion_menu.style = $menus.completion_menu.style
+# 
+#     $menus.history_menu.marker = $"(ansi $c.main_color)? (ansi reset)"
+#     $menus.history_menu.style.text = $c.main_color
+#     $menus.history_menu.style.selected_text = $c.main_color_reverse
+#     $menus.history_menu.style.description_text = $c.main_color_faint
+# 
+#     $menus.help_menu.marker = $"(ansi $c.main_color)? (ansi reset)"
+#     $menus.help_menu.style = $menus.history_menu.style
+# 
+#     $menus | values
+# }
+# 

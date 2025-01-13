@@ -1,5 +1,3 @@
-source default_env.nu
-
 $env.kira = {}
 $env.kira.colors = do {
     mut c = {}
@@ -82,25 +80,6 @@ $env.PROMPT_COMMAND = {||
     )
 }
 
-# $env.PROMPT_COMMAND_RIGHT = {||
-#     let c = $env.kira.colors
-#     let time = date now
-#     mut time_string = ""
-#     mut time_segment = ['%Y', '%m', '%d', '%H', '%M', '%S']
-#         | each {|it| $time | format date $it }
-#         | zip [(char -u '00B7'), (char -u '00B7'), ' ', ':', ':', $" \(($time | timezone | get name))"]
-#         | each {|it| $"(ansi reset)(ansi $c.main_color_reverse_bold)($it.0)(ansi reset)(ansi $c.main_color_reverse)($it.1)"}
-#         | str join
-#
-#     let last_exit_code = if ($env.LAST_EXIT_CODE != 0) {([
-#         (ansi reset)
-#         (ansi bg_red)
-#         ($env.LAST_EXIT_CODE)
-#     ] | str join)
-#     } else { "" }
-#
-#     ([$last_exit_code, (char space), $time_segment] | str join)
-# }
 $env.PROMPT_COMMAND_RIGHT = {|| ''}
 
 $env.PROMPT_INDICATOR = {|| $"(ansi $env.kira.colors.main_color_bold)(char -u "21AA") (ansi reset)" }
