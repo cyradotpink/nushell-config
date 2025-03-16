@@ -21,28 +21,13 @@ $env.kira.colors = do {
     $c
 }
 
-use ~/Documents/code/nucmds/startup.nu *
+use ~/Documents/code/nushell-commands/startup.nu *
 
 $env.NU_DEPTH = if (procfs exe (procfs status $nu.pid | get p_pid)) == (procfs exe $nu.pid) {
     try { ($env.NU_DEPTH | into int) + 1 } catch { 0 }
 } else {
     0
 }
-$env.EDITOR = "nvim"
-$env.SCCACHE = $env.HOME + "/.cargo/bin/sccache"
-
-# $env.JAVA_HOME = /usr/lib/jvm/java-17-openjdk
-$env.PATH = ($env.PATH | append ($env.HOME + "/.local/opt/bin"))
-$env.PATH = ($env.PATH | append ($env.HOME + "/.deno/bin"))
-$env.PATH = ($env.PATH | append ($env.HOME + "/opt/gradle/bin"))
-$env.PATH = ($env.PATH | append ($env.HOME + "/.local/share/JetBrains/Toolbox/scripts"))
-$env.PATH = ($env.PATH | append ($env.HOME + "/.ghcup/bin"))
-$env.PATH = ($env.PATH | append ($env.HOME + "/.cargo/bin"))
-$env.PATH = ($env.PATH | append ($env.HOME + "/opt/texlive/2023/bin/x86_64-linux"))
-$env.PATH = ($env.PATH | append ((pyenv root) + "/shims"))
-$env.PATH = ($env.PATH | append ($env.HOME + "/.local/share/fnm"))
-load-env (fnm env --json | from json)
-$env.PATH = ($env.PATH | append $"($env.FNM_MULTISHELL_PATH)/bin")
 
 $env.PROMPT_COMMAND = {||
     let c = $env.kira.colors
@@ -87,3 +72,4 @@ $env.PROMPT_INDICATOR_VI_INSERT = {|| $"(ansi $env.kira.colors.main_color_bold):
 $env.PROMPT_INDICATOR_VI_NORMAL = {|| $"(ansi $env.kira.colors.main_color_bold)> (ansi reset)" }
 $env.PROMPT_MULTILINE_INDICATOR = {|| $"(ansi $env.kira.colors.main_color_bold)::: (ansi reset)" }
 
+source localenv.nu
