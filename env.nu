@@ -1,3 +1,5 @@
+source localenv.nu
+
 $env.kira = {}
 $env.kira.colors = do {
     mut c = {}
@@ -21,7 +23,6 @@ $env.kira.colors = do {
     $c
 }
 
-use ~/Documents/code/nushell-commands/startup.nu *
 
 $env.NU_DEPTH = if (procfs exe (procfs status $nu.pid | get p_pid)) == (procfs exe $nu.pid) {
     try { ($env.NU_DEPTH | into int) + 1 } catch { 0 }
@@ -71,5 +72,3 @@ $env.PROMPT_INDICATOR = {|| $"(ansi $env.kira.colors.main_color_bold)(char -u "2
 $env.PROMPT_INDICATOR_VI_INSERT = {|| $"(ansi $env.kira.colors.main_color_bold): (ansi reset)" }
 $env.PROMPT_INDICATOR_VI_NORMAL = {|| $"(ansi $env.kira.colors.main_color_bold)> (ansi reset)" }
 $env.PROMPT_MULTILINE_INDICATOR = {|| $"(ansi $env.kira.colors.main_color_bold)::: (ansi reset)" }
-
-source localenv.nu
